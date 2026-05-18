@@ -1,8 +1,8 @@
 use axum::Json;
 
-#[derive(Debug, serde::Serialize)]
+#[derive(Debug, serde::Serialize, serde::Deserialize)]
 pub struct Vehicle {
-    id: String,
+    id: Option<String>,
     manufacturer: String,
     model: String,
     year: u32,
@@ -15,10 +15,11 @@ pub async fn vehicle_get() -> Json<Vehicle> {
         manufacturer: "BMW".to_string(),
         model: "X1".to_string(),
         year: 2021,
-        id: uuid::Uuid::new_v4().to_string(),
+        id: Some(uuid::Uuid::new_v4().to_string()),
     })
 }
 
-pub async fn vehicle_post() -> String {
-    "New Vehicle Created".to_string()
+pub async fn vehicle_post(Json(mut vehicle): Json<Vehicle>) -> Json<Vehicle> {
+    vehicle.id = Some(uuid::Uuid::new_v4().to_string());
+    Json(vehicle)
 }
